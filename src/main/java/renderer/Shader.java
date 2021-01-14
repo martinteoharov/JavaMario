@@ -1,6 +1,7 @@
 package renderer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
 
@@ -20,6 +21,8 @@ public class Shader {
     private String vertexSrc;
     private String fragmentSrc;
     private String filepath;
+
+    private boolean beingUsed = false;
 
 
     public Shader(String filepath){
@@ -116,20 +119,46 @@ public class Shader {
     }
 
     public void use(){
-        // Bind shader program
-        glUseProgram(shaderProgramID);
+        if(!beingUsed){
+            glUseProgram(shaderProgramID);
+            beingUsed = true;
+        }
     }
 
     public void detach(){
         glUseProgram(0);
+        this.beingUsed = false;
     }
 
     public void uploadMat4f(String varName, Matrix4f mat4){
         int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
         mat4.get(matBuffer);
         glUniformMatrix4fv(varLocation, false, matBuffer);
     }
 
+    public void uploadVec4f(String varName, Vector4f vec){
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
+    }
 
+    public void uploadFloat(String varName, float val){
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1f(varLocation, val);
+    }
+
+    public void uploadInt(String varName, int val){
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1f(varLocation, val);
+    }
+
+    public void uploadTexture(String varName, int slot){
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        use();
+        glUniform1i(varLocation, slot);
+    }
 }

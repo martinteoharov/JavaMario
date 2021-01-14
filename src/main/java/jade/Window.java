@@ -16,24 +16,22 @@ public class Window {
     private long glfwWindow;
 
     private static int width, height;
-    private String title;
+    private static String title;
 
     // Background RGB Values
     public static float r, g, b;
 
     private static Scene currentScene;
 
-
     private Window() {
-        this.width = 1366;
-        this.height = 768;
-        this.title = "Martong Us";
-        this.r = 0.0f;
+        Window.width = 1366;
+        Window.height = 768;
+        Window.title = "Martong Us";
+        this.r = 1.0f;
         this.g = 1.0f;
         this.b = 1.0f;
 
     }
-
 
     public static void changeScene(int newScene){
         switch(newScene){
@@ -88,7 +86,7 @@ public class Window {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // Create Window
-        glfwWindow = glfwCreateWindow(this.width, this.height, this.title, NULL, NULL);
+        glfwWindow = glfwCreateWindow(Window.width, Window.height, Window.title, NULL, NULL);
         if(glfwWindow == NULL){
             throw new IllegalStateException("Failed to create the GLFW window");
         }
@@ -111,13 +109,15 @@ public class Window {
         // current in the current thread, creates the GLCapabilities instance and makes
         // the OpenGL bindings available for use.
         GL.createCapabilities();
+        
+        // was previously in loop()
+        Window.changeScene(0);
     }
 
     public void loop() {
         float beginTime = Time.getTime();
         float endTime;
         float dt = -1.0f;
-        Window.changeScene(0);
 
         while(!glfwWindowShouldClose(glfwWindow)){
             // Poll events
